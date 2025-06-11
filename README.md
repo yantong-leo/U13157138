@@ -6,7 +6,8 @@
 - 本專案在本地端電腦使用的 ROS2 版本為 kilted
 
 ## Install ROS2-v4l2-camera Package
-- 安裝 ROS2 的 [ROS2-v4l2-camera]([https://github.com/ros-drivers/ros2_v4l2_camera](https://index.ros.org/r/v4l2_camera/#kilted)) 包到本地端，版本為 kitled
+- 安裝 ROS2 的 [ROS2-v4l2-camera]([https://github.com/ros-drivers/ros2_v4l2_camera]) 包到本地端，版本為 kitled
+- 安裝 ROS2 的 [ROS2-v4l2-camera]() 包到本地端，版本為 kitled
 
 ```bash
 sudo apt install ros-foxy-v4l2-camera
