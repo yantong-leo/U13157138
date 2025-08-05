@@ -1,0 +1,135 @@
+# ROS 2 on Kakip 開發筆記
+
+本專案紀錄在 [Kakip AI 開發板](https://www.kakip.ai/) 上安裝與使用 ROS 2 的完整流程，包含系統安裝、SSH 設定、ROS 2 安裝與相機模組啟用等步驟。
+
+---
+
+## 1. Kakip 系統介紹 / System Introduction
+
+Kakip 是一款由 Renesas 推出的 AI 邊緣運算開發板，搭載 RZ/V2H SoC，具備強大的影像處理與機器學習加速能力，特別適用於開發 AI Vision 與 ROS 2 應用。
+
+官方網站：[https://www.kakip.ai/](https://www.kakip.ai/)
+
+處理器：Renesas RZ/V2H  
+系統支援：Ubuntu 20.04 / Yocto Linux  
+支援介面：MIPI CSI-2、Ethernet、USB、SD Card 等
+
+---
+
+## 2. 系統設定與遠端連線 / System Setup & SSH
+
+### 🔧 若系統為日文版，先切換為英文語系（建議）
+
+```bash
+sudo apt update
+sudo apt install language-pack-en
+sudo update-locale LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+```
+
+---
+
+### 安裝 Kakip 官方系統映像：
+
+1. 前往 Kakip 官方網站下載系統映像  
+   🔗 [系統安裝載點](https://www.kakip.ai/download)
+
+2. 使用 balenaEtcher 或 dd 工具寫入 microSD 卡：
+
+```bash
+sudo dd if=kakip-ubuntu.img of=/dev/sdX bs=4M status=progress conv=fsync
+```
+
+3. 將 microSD 卡插入 Kakip 開發板，接上電源開機。
+
+4. 依照螢幕指示完成初始設定（語言、網路等）。
+
+---
+
+### 啟用 SSH 遠端連線：
+
+1. 預設 Ubuntu 20.04 已安裝 OpenSSH Server，若無請執行：
+
+```bash
+sudo apt update
+sudo apt install openssh-server
+```
+
+2. 查詢 Kakip 板子的 IP 位址：
+
+```bash
+ip a
+```
+
+3. 於 PC 端使用 SSH 連線：
+
+```bash
+ssh <username>@<Kakip_IP>
+```
+
+---
+
+## 3. 安裝 ROS 2
+
+### 1. 設定 ROS 2 軟體來源：
+
+```bash
+sudo apt update && sudo apt install locales
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+sudo apt update && sudo apt install curl -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+```
+
+### 2. 安裝 ROS 2 套件（以 Humble 為例）：
+
+```bash
+sudo apt update
+sudo apt install ros-humble-desktop
+```
+
+### 3. 設定 ROS 2 環境變數：
+
+```bash
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+
+---
+
+## 4. 啟用相機模組
+
+1. 連接 MIPI CSI-2 相機模組至 Kakip 開發板。
+2. 驗證相機裝置是否被辨識：
+
+```bash
+ls /dev/video*
+```
+
+3. 安裝相機相關套件（如 v4l-utils）：
+
+```bash
+sudo apt install v4l-utils
+```
+
+4. 測試相機畫面：
+
+```bash
+v4l2-ctl --list-devices
+v4l2-ctl --device=/dev/video0 --all
+```
+
+---
+
+## 5. 參考資料
+
+- [Kakip 官方文件](https://www.kakip.ai/docs)
+- [ROS 2 官方安裝指南](https://docs.ros.org/en/humble/Installation.html)
+- [v4l-utils 官方文件](https://github.com/Distrotech/v4l-utils)
+
+---
